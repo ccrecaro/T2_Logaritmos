@@ -7,7 +7,7 @@
 
 
 void dijkstra_arreglo(double **matriz, int N, int O){
-	//1 es true 0 es false
+
 	int i,j;
 
 
@@ -64,7 +64,7 @@ void dijkstra_arreglo(double **matriz, int N, int O){
 	}
 	
 	for(i=0;i<N;i++)
-		printf("%f\t%d\t%d\n",dist[i],marcados[i],prev[i]);
+		printf("%f\t%d\n",dist[i],prev[i]);
 	
 }
 
@@ -90,4 +90,6 @@ int main(int argc, char **argv){
 
 
 	dijkstra_arreglo(matriz,N,4);
+	
+	return 0;
 }
