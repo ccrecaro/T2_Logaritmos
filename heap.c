@@ -12,7 +12,7 @@ typedef struct vertice{
 }vertice;
 
 
-typedef struct normalHeap { 
+typedef struct normalHeap{ 
     vertice *arreglo; 
     int size; 
 }normalHeap;
@@ -27,38 +27,34 @@ normalHeap crearHeapNormal(int size){
 	
 } 
 
-void cambiar(vertice *x, vertice *y) 
-{ 
+void cambiar(vertice *x, vertice *y){ 
     vertice aux = *x; 
     *x = *y; 
     *y = aux; 
 } 
 
     
-void insertar(normalHeap* heapNormal, vertice k) 
-{ 
+void insertar(normalHeap* heapNormal, vertice k){ 
     heapNormal->size++; 
     int i = heapNormal->size - 1; 
     heapNormal->arreglo[i] = k; 
   
 
-	while (i != 0 && heapNormal->arreglo[(i-1)/2].prioridad > heapNormal->arreglo[i].prioridad) 
-    { 
+	while (i != 0 && heapNormal->arreglo[(i-1)/2].prioridad > heapNormal->arreglo[i].prioridad){ 
        cambiar(&heapNormal->arreglo[(i-1)/2],&heapNormal->arreglo[i]); 
        i = (i-1)/2; 
     } 
 } 
 
-void decreaseKey(normalHeap* heapNormal, int i, double new_val) 
-{
+void decreaseKey(normalHeap* heapNormal, int i, double newPrior){
+	
 	for(int k=0;k<heapNormal->size;k++){
 		
 		if(heapNormal->arreglo[k].i==i){
 			
-			heapNormal->arreglo[k].prioridad = new_val;
+			heapNormal->arreglo[k].prioridad = newPrior;
 			
-			while (k!= 0 && heapNormal->arreglo[(k-1)/2].prioridad > heapNormal->arreglo[k].prioridad) 
-			{ 
+			while (k!= 0 && heapNormal->arreglo[(k-1)/2].prioridad > heapNormal->arreglo[k].prioridad){ 
 				cambiar(&heapNormal->arreglo[(k-1)/2],&heapNormal->arreglo[k]); 
 				k = (k-1)/2; 
 			}
@@ -71,29 +67,29 @@ void decreaseKey(normalHeap* heapNormal, int i, double new_val)
 
 }
 
-void reordenar(normalHeap* heapNormal, int i) 
-{ 
+void reordenar(normalHeap* heapNormal, int i) { 
 	
     int min = i; 
-    if (2*i + 1 < heapNormal->size && heapNormal->arreglo[2*i + 1].prioridad < heapNormal->arreglo[i].prioridad) 
+    
+    if (heapNormal->size>2*i + 1 && heapNormal->arreglo[2*i + 1].prioridad < heapNormal->arreglo[i].prioridad) 
         min = 2*i + 1; 
-    if (2*i + 2 < heapNormal->size && heapNormal->arreglo[2*i + 2].prioridad < heapNormal->arreglo[min].prioridad) 
+        
+    if (heapNormal->size>2*i + 2 && heapNormal->arreglo[2*i + 2].prioridad < heapNormal->arreglo[min].prioridad) 
         min = 2*i + 2; 
-    if (min != i) 
-    { 
+        
+    if (min != i){ 
         cambiar(&heapNormal->arreglo[i], &heapNormal->arreglo[min]); 
         reordenar(heapNormal,min); 
     } 
 } 
 
 
-vertice extraerMin(normalHeap* heapNormal) 
-{
+vertice extraerMin(normalHeap* heapNormal){
 	vertice min = heapNormal->arreglo[0];
 	heapNormal->size--;
 	
-    if (heapNormal->size > 0) 
-    {
+    if (heapNormal->size > 0){
+		
 		heapNormal->arreglo[0] = heapNormal->arreglo[heapNormal->size]; 
 		reordenar(heapNormal, 0);
       
@@ -166,7 +162,6 @@ void dijkstra_heapNormal(double **matriz, int N, int O){
   
 
 int main(int argc, char **argv){
-{
 	
 	int i,j;
 	double **matriz;
