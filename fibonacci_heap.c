@@ -305,28 +305,6 @@ void dijkstra_fibonacciHeap(double **grafo,int N, int origen){
         }
 
     }
-    for(int i=0;i<N;i++){
-		printf("%f\t%d\n",dist[i],prev[i]);
-    }
+  
 }
 
-
-int main(){
-	
-	int i,j;
-	double **matriz;
-	int N = 5;
-	matriz = (double**) malloc( N * sizeof(double*) );
-	for(i=0; i< N; i++){
-		matriz[i] = (double*) malloc( N * sizeof(double) );
-	}
-	
-	double matriz_aux[5][5] = { {0,7,-1,2,-1},{-1,0,1,2,-1},{-1,-1,0,-1,5},{-1,3,8,0,5},{-1,-1,4,-1,0}};
-	
-	for(i=0; i< N; i++){
-		for(j=0; j< N; j++)
-			matriz[i][j] = matriz_aux[i][j];
-	}
-	
-	dijkstra_fibonacciHeap(matriz, 5, 4);
-}

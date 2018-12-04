@@ -53,7 +53,6 @@ double** crearGrafo(int N, int aristas){
 				if(matriz[num][i]<0){
 					matriz[num][i]= rand() / ((double) RAND_MAX);
 					aristas--;
-					printf("%d\n",aristas);
 					
 				}
 				
@@ -72,14 +71,4 @@ double** crearGrafo(int N, int aristas){
 } 
 
 
-int main(int argc, char **argv){
-	
-	
-	int i,j;
-	int N=100000;
-	double** matriz=crearGrafo(N,10*N);
 
-
-
-    return 0; 
-} 
