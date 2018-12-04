@@ -12,13 +12,14 @@ typedef int bool;
 #define false 0
 
 typedef struct Node{
+    int value; //valor del nodo
     int degree; //numero de childrens
     bool mark; //si perdio un hijo
     struct Node *p; //puntero a los padres
     struct Node *child; //puntero a un hijo
     struct Node *left;
     struct Node *right;
-    int key; //key del heap
+    double prioridad; //Se trabaja la prioridad como el key del fibonacci heap
     void *payload; 
 }Node;
 

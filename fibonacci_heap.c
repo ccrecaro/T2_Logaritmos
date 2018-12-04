@@ -1,8 +1,9 @@
 #include "fibonacci_heap.h"
 
-Node* initialize_node(int k){
+Node* initialize_node(int prioridad, int v){
     Node *n = malloc(sizeof(Node));
-    n->key = k;
+    n->prioridad = prioridad;
+    n->value = v;
     n->degree = 0;
     n->mark = false;
     n->p = NULL;
@@ -10,7 +11,6 @@ Node* initialize_node(int k){
     n->left = NULL;
     n->right = NULL;
     return n;
-
 }
 
 FibonacciHeap* initialize_fh(){
@@ -42,7 +42,7 @@ void insert(FibonacciHeap *H, Node *x){
         H->min->right = x;
 
         //De ser necesario, se cambia nodo minimo
-        if(x->key < H->min->key){
+        if(x->prioridad < H->min->prioridad){
             H->min = x;
         }
     }
@@ -83,7 +83,7 @@ FibonacciHeap* fib_heap_union(FibonacciHeap *H1, FibonacciHeap *H2){
     H->min->left = H2->min;
     H2->min->right = H->min;
     
-    if(H1->min == NULL || (H2->min != NULL && H2->min->key < H1->min->key)){
+    if(H1->min == NULL || (H2->min != NULL && H2->min->prioridad < H1->min->prioridad)){
         H->min = H2->min;
     }
 
@@ -122,7 +122,7 @@ void consolidate(FibonacciHeap *H){
         while(A[d] != NULL){
             
             Node *y = A[d]; //Otro nodo con el mismo degree que x
-            if(x->key > y->key){
+            if(x->prioridad > y->prioridad){
                 Node *buf = x;
                 x = y;
                 y = buf;
@@ -151,7 +151,7 @@ void consolidate(FibonacciHeap *H){
 				A[i]->left = H->min->left;
 				A[i]->right = H->min;
 				H->min->left = A[i];
-				if (A[i]->key < H->min->key){
+				if (A[i]->prioridad < H->min->prioridad){
 					H->min = A[i];
 				}
             }
@@ -230,52 +230,155 @@ Node* extract_min(FibonacciHeap *H){
 }
 
 
-/*Cambia la key del nodo x por una menor*/
-void decreaseKey(FibonacciHeap *H, Node *x, int k){
-    if(k > x->key){
-        printf("Error: La nueva key es mas grande que la key actual");
+/*Cambia la prioridad del nodo x por una menor*/
+void decreasekey(FibonacciHeap *H, Node *x, int k){
+    if(k > x->prioridad){
+        //printf("Error: La nueva prioridad es mas grande que la prioridad actual");
     }
     else{
-        x->key = k;
+        x->prioridad = k;
         Node *y = x->p;
-        if (y != NULL && x->key < y->key){
+        if (y != NULL && x->prioridad < y->prioridad){
             cut(H, x, y);
             cascading_cut(H, y);
         }
-        if (x->key < H->min->key){
+        if (x->prioridad < H->min->prioridad){
             H->min = x;
         }
     }
 }
 
+void dijkstra_fibonacciHeap(double **grafo,int N, int origen){
+    FibonacciHeap *Q = initialize_fh();
+    //int N = sizeof(grafo)/sizeof(grafo[0]); //tamaño matriz de grafos;
+    //printf("\nN: %d\n", N);
+    double dist[N];
+    int prev[N];
+ 
+
+    for(int v=0; v<N; v++){
+        if(v==0){
+            dist[v] = 0.0;
+        }
+        else{
+            dist[v] = INFINITY;
+        }
+        prev[v] = -1; 
+        Node *naux = initialize_node(dist[v], v);
+        insert(Q, naux);
+    }
+
+   
+
+    while(Q->n > 0){
+        Node *m = extract_min(Q);
+        printf("AAAAAAAAA\n");
+        for(int j=0; j<N; j++){
+            printf("j= %d\n", j);
+            if(grafo[m->value][j]>0){
+                
+
+                double nuevaDist = m->prioridad + grafo[m->value][j];
+
+                if(nuevaDist<dist[j]){
+
+                    dist[j] =nuevaDist;
+                    prev[j] = m->value;
+                    Node *nm= initialize_node(m->prioridad,j);
+
+                    decreasekey(Q,nm,nuevaDist);
+                    printf("3");
+                }
+            }
+            
+        }
+        //printf("%f\t%d\n",dist[Q->n],prev[Q->n]);
+        
+       
+        /*
+        if(m != NULL){
+            if(m->left != m){
+                Node *n_left = m->left;
+               
+                double nuevaDist = m->prioridad + grafo[m->value][n_left->value];
+                
+                if(nuevaDist < dist[n_left->value]){
+                    dist[n_left->value] = nuevaDist;
+                    prev[n_left->value] = m->value;
+                    decreasekey(Q, m->left, nuevaDist);
+                }
+            }
+            if(m->right != m){
+                Node *n_right = m->right;
+                double nuevaDist = m->prioridad + grafo[m->value][n_right->value];
+                
+                if(nuevaDist < dist[n_right->value]){
+                    dist[n_right->value] = nuevaDist;
+                    prev[n_right->value] = m->value;
+                    decreasekey(Q, m->left, nuevaDist);
+                }
+            }            
+        }*/
+
+    }
+    for(int i=0;i<N;i++){
+		printf("%f\t%d\n",dist[i],prev[i]);
+    }
+
+    
+
+}
+
+
+int main(){
+	
+	int i,j;
+	double **matriz;
+	int N = 5;
+	matriz = (double**) malloc( N * sizeof(double*) );
+	for(i=0; i< N; i++){
+		matriz[i] = (double*) malloc( N * sizeof(double) );
+	}
+	
+	double matriz_aux[5][5] = { {0,7,-1,2,-1},{-1,0,1,2,-1},{-1,-1,0,-1,5},{-1,3,8,0,5},{-1,-1,4,-1,0}};
+	
+	for(i=0; i< N; i++){
+		for(j=0; j< N; j++)
+			matriz[i][j] = matriz_aux[i][j];
+	}
+	
+	dijkstra_fibonacciHeap(matriz, 5, 4);
+}
+/*
 int main(){
 
 	FibonacciHeap *H = initialize_fh();
-	Node *x1 = initialize_node(1);
-    Node *x2 = initialize_node(2);
-    Node *x3 = initialize_node(3);
-    Node *x4 = initialize_node(9);
+	Node *x1 = initialize_node(1,1);
+    Node *x2 = initialize_node(2,2);
+    Node *x3 = initialize_node(3,3);
+    Node *x4 = initialize_node(4,9);
 
     insert(H, x1);
-    insert(H,x2);
+    insert(H, x2);
     insert(H, x3);
     insert(H, x4);
 
     Node *min= find_min(H);
-    assert(min->key == 1);
-    assert(min->left->key == 2);
-    assert(min->left->left->key == 3);
-    assert(min->left->right->key == 1);
-    assert(min->left->left->left->key == 9);
-    assert(min->right->key == 9);
+    assert(min->value == 1);
+    assert(min->left->value == 2);
+    assert(min->left->left->value == 3);
+    assert(min->left->right->value == 1);
+    assert(min->left->left->left->value == 9);
+    assert(min->right->value == 9);
 
     Node  *n= extract_min(H);
-    assert(n->key == 1);
+    assert(n->prioridad == 1);
 
     Node *min2= find_min(H);
-    assert(min2->key == 2);
+    assert(min2->prioridad == 2);
 
 	printf("\nSuccess!\nResults are in the file output.txt\n");
 
 	return 0;
-}
+}*/
+
