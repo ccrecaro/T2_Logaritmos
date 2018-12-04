@@ -1,8 +1,17 @@
 #include "fibonacci_heap.h"
 
-typedef int bool;
-#define true 1
-#define false 0
+Node* initialize_node(int k){
+    Node *n = malloc(sizeof(Node));
+    n->key = k;
+    n->degree = 0;
+    n->mark = false;
+    n->p = NULL;
+    n->child = NULL;
+    n->left = NULL;
+    n->right = NULL;
+    return n;
+
+}
 
 FibonacciHeap* initialize_fh(){
     FibonacciHeap *H = malloc(sizeof(FibonacciHeap));
@@ -44,35 +53,6 @@ Node* find_min(FibonacciHeap *H){
     return H->min;
 }
 
-Node* extract_min(FibonacciHeap *H){
-    Node *z = H->min;
-
-    if(z != NULL){
-        if(z == z->right){
-            H->min = z->child;
-            consolidate(H);
-        }
-        else{
-            if(z->child == NULL){
-                z->left->right = z->right;
-                z->right->left = z->left;
-                H->min = z->right;
-                consolidate(H);
-            }
-            else{
-                z->left->right = z->child;
-                z->right->left = z->child->left;
-                z->child->left->right = z->right;
-                z->child->left = z->left;
-                H->min = z->right;
-                consolidate(H);
-            }
-        }
-        H->n--;
-
-    }
-    return z;
-}
 
 void link(FibonacciHeap *H, Node *y, Node *x){
     y->left->right = y->right;
@@ -93,68 +73,6 @@ void link(FibonacciHeap *H, Node *y, Node *x){
     y->mark = false;
 }
 
-void consolidate(FibonacciHeap *H){
-    int DH_n = (int)floor(log10(H->n -1)/log10(2)); //upper bound D(H->n) en el degree maximo
-
-    Node **A= malloc(DH_n * sizeof(Node*));
-    for(int i=0; i<DH_n; i++){
-        A[i]= NULL;
-    }
-
-    //calcular numero de nodos en root list
-    int n_rlist = 0; //cantidad de nodos en root list
-    Node *w =  H->min; //Para recorrer nodos en root list
-    if(H->min != NULL){
-        n_rlist++;
-        while(w != H->min->left){
-            n_rlist++;
-            Node *buf = w->right;
-            w = buf;
-        }
-    }
-
-    w = H->min;
-
-    for(int k=0; k<n_rlist; k++){
-        Node *x = w;
-        int d = x->degree;
-
-        while(A[d] != NULL){
-            Node *y = A[d]; //Otro nodo con el mismo degree que x
-            if(x->key > y->key){
-                Node *buf = x;
-                x = y;
-                y = buf;
-            }
-            link(H, y, x);
-            A[d] = NULL;
-            d++;
-        }
-        A[d] = x;
-        w = x->right; //REVISAR
-    }
-
-    H->min = NULL
-
-    for(int i=0; i<DH_n; i++){
-        if(A[i] != NULL){
-            if(H->min == NULL){
-                H->min = A[i];
-            }
-            else{
-                //Insertar A[i] a la root list de H
-                H->min->left->right = A[i];
-                A[i]->left = H->min->left;
-                A[i]->right = H->min;
-                H->min->left = A[i];
-
-                if(A[i]->key < H->min->key){
-                    H->min = A[i];
-                }
-            }
-        }
-    }
-}
 
 FibonacciHeap* fib_heap_union(FibonacciHeap *H1, FibonacciHeap *H2){
     FibonacciHeap *H= initialize_fh();
@@ -174,6 +92,73 @@ FibonacciHeap* fib_heap_union(FibonacciHeap *H1, FibonacciHeap *H2){
 }
 
 
+void consolidate(FibonacciHeap *H){
+    int DH_n = (int)floor(log10(H->n -1)/log10(2)); //upper bound D(H->n) en el degree maximo
+
+    Node **A= malloc(DH_n * sizeof(Node*));
+    for(int i=0; i<DH_n; i++){
+        A[i]= NULL;
+    }
+    
+    //calcular numero de nodos en root list
+    int n_rlist = 0; //cantidad de nodos en root list
+    Node *w =  H->min; //Para recorrer nodos en root list
+    if(H->min != NULL){
+        n_rlist++;
+        while(w != H->min->left){
+            n_rlist++;
+            Node *buf = w->right;
+            w = buf;
+        }
+    }
+
+    w = H->min;
+
+    for(int k=0; k<n_rlist; k++){
+        
+        Node *x = w;
+        int d = x->degree;
+
+        while(A[d] != NULL){
+            
+            Node *y = A[d]; //Otro nodo con el mismo degree que x
+            if(x->key > y->key){
+                Node *buf = x;
+                x = y;
+                y = buf;
+            }
+            link(H, y, x);
+            A[d] = NULL;
+            d++;
+            
+        }
+        A[d] = x;
+
+        w = w->right;
+        
+    }
+
+    H->min = NULL;
+
+    for(int i=0; i<=DH_n; i++){
+        
+        if(A[i] != NULL){
+            if (H->min == NULL){
+				H->min = A[i];
+			} 
+            else{
+				H->min->left->right = A[i];
+				A[i]->left = H->min->left;
+				A[i]->right = H->min;
+				H->min->left = A[i];
+				if (A[i]->key < H->min->key){
+					H->min = A[i];
+				}
+            }
+        }
+    }
+    
+}
 
 /*Corta el link entre x  y su padre y, haciendo de x una raiz*/
 void cut(FibonacciHeap *H, Node *x, Node *y){
@@ -211,6 +196,40 @@ void cascading_cut(FibonacciHeap *H, Node *y){
     }
 }
 
+Node* extract_min(FibonacciHeap *H){
+    Node *z = H->min;
+
+    if(z != NULL){
+        if(z == z->right){
+            H->min = z->child;
+           
+            consolidate(H);
+        }
+        else{
+            if(z->child == NULL){
+                z->left->right = z->right;
+                z->right->left = z->left;
+                H->min = z->right;
+               
+                consolidate(H);
+            }
+            else{
+                z->left->right = z->child;
+                z->right->left = z->child->left;
+                z->child->left->right = z->right;
+                z->child->left = z->left;
+                H->min = z->right;
+              
+                consolidate(H);
+            }
+        }
+        H->n--;
+
+    }
+    return z;
+}
+
+
 /*Cambia la key del nodo x por una menor*/
 void decreaseKey(FibonacciHeap *H, Node *x, int k){
     if(k > x->key){
@@ -227,4 +246,36 @@ void decreaseKey(FibonacciHeap *H, Node *x, int k){
             H->min = x;
         }
     }
+}
+
+int main(){
+
+	FibonacciHeap *H = initialize_fh();
+	Node *x1 = initialize_node(1);
+    Node *x2 = initialize_node(2);
+    Node *x3 = initialize_node(3);
+    Node *x4 = initialize_node(9);
+
+    insert(H, x1);
+    insert(H,x2);
+    insert(H, x3);
+    insert(H, x4);
+
+    Node *min= find_min(H);
+    assert(min->key == 1);
+    assert(min->left->key == 2);
+    assert(min->left->left->key == 3);
+    assert(min->left->right->key == 1);
+    assert(min->left->left->left->key == 9);
+    assert(min->right->key == 9);
+
+    Node  *n= extract_min(H);
+    assert(n->key == 1);
+
+    Node *min2= find_min(H);
+    assert(min2->key == 2);
+
+	printf("\nSuccess!\nResults are in the file output.txt\n");
+
+	return 0;
 }
