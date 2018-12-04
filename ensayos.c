@@ -10,7 +10,7 @@ int main(){
 	int N=100000;
 	int K=10;
 	int N_ensayos=10;
-	double** matriz=crearGrafo(N,10*N);
+	double** matriz;
 	int O;
 	clock_t begin, end;
 	double time_spent;
@@ -21,13 +21,30 @@ int main(){
 	
 	for(i=1;i<4;i++){
 		
+		printf("\ngenerando datos\n");
 		matriz=crearGrafo(N,K*N);
-		
+		printf("generacion de datos terminada\n");
 		
 		for(j=0;j<N_ensayos;j++){
 			
 			O = rand()%N;
 			
+			
+			printf("\narreglo\n");
+			begin = clock();
+			dijkstra_arreglo(matriz,N,O);
+			end = clock();
+			time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+			fprintf(archivoA,"%.5f\n",time_spent);
+			
+			printf("\nheap\n");
+			begin = clock();
+			dijkstra_heapNormal(matriz, N, O);
+			end = clock();
+			time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+			fprintf(archivoH,"%.5f\n",time_spent);
+	
+			printf("\nfibonacci\n");
 			begin = clock();
 			dijkstra_fibonacciHeap(matriz, N, O);
 			end = clock();
@@ -35,18 +52,7 @@ int main(){
 			fprintf(archivoF,"%.5f\n",time_spent);
 	
 	
-			begin = clock();
-			dijkstra_fibonacciHeap(matriz, N, O);
-			end = clock();
-			time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-			fprintf(archivoH,"%.5f\n",time_spent);
-	
-	
-			begin = clock();
-			dijkstra_arreglo(matriz,N,O);
-			end = clock();
-			time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-			fprintf(archivoA,"%.5f\n",time_spent);
+			
 			
 			
 			
