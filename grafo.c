@@ -29,7 +29,12 @@ void agregarVecino(vecinos* new_vecino, int vecino,double new_peso)
 vecinos* crearVecinos(int N, int vertices){
 	
 	vecinos* lista;
-	int marcados[N][N];
+	
+	int **marcados;
+	
+	marcados = (int**) malloc( N * sizeof(int*) );
+	
+	
 	lista=malloc(N*sizeof(vecinos));
 
 	for(int i=0;i<N;i++){
@@ -37,7 +42,7 @@ vecinos* crearVecinos(int N, int vertices){
 		lista[i]->v_nodo=i;
 		lista[i]->peso = 0;
 		lista[i]->next=NULL;
-		
+		marcados[i] = (int*) malloc( N * sizeof(int) );
 		for(int j=0;j<N;j++)
 			marcados[i][j]=0;
 	}
