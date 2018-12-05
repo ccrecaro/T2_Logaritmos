@@ -1,22 +1,5 @@
-#include <math.h>
-#include <string.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "heap.h"
 
-
-typedef struct vertice{
-	int i;
-	double prioridad;
-	
-}vertice;
-
-
-typedef struct normalHeap{ 
-    vertice *arreglo; 
-    int size; 
-}normalHeap;
-  
 
 normalHeap crearHeapNormal(int size){
 	vertice* verts = (vertice*) malloc(size * sizeof(vertice));
@@ -101,9 +84,9 @@ vertice extraerMin(normalHeap* heapNormal){
 
 
 
-void dijkstra_heapNormal(double **matriz, int N, int O){
+void dijkstra_heapNormal(vecinos *lista, int N, int O){
 
-	int i,j;
+	int i;
 	double dist[N];
 	int prev[N];
 	normalHeap NH = crearHeapNormal(N);
@@ -127,22 +110,18 @@ void dijkstra_heapNormal(double **matriz, int N, int O){
 	while(NH.size>0){
 		
 		auxV = extraerMin(&NH);
-		for(j=0;j<N;j++){
+		
+		vecinos aux = lista[auxV.i]->next;
+		while(aux!=NULL){
+			newDist = auxV.prioridad + aux->peso;
 			
-			if(matriz[auxV.i][j]>0){
-				
-				newDist = auxV.prioridad + matriz[auxV.i][j];
-				
-				if(newDist < dist[j]){
-					dist[j] = newDist; 
-					prev[j] = auxV.i; 
-					decreaseKey(&NH,j,newDist);
+			if(newDist < dist[aux->v_nodo]){
+					dist[aux->v_nodo] = newDist; 
+					prev[aux->v_nodo] = auxV.i; 
+					decreaseKey(&NH,aux->v_nodo,newDist);
 
 				}
-				
-				
-			}
-			
+			aux = aux->next;
 		}
 		
 		

@@ -1,7 +1,8 @@
-#include "fibonacci_heap.c"
-#include "arreglo.c"
-#include "heap.c"
-#include "grafo.c"
+#include "grafo.h"
+
+// para compilar 
+// gcc -g -o ensayos ensayos.c arreglo.c grafo.c heap.c -lm
+
 
 int main(){
 	
@@ -9,8 +10,9 @@ int main(){
 	
 	int N=100000;
 	int K=10;
-	int N_ensayos=10;
-	double** matriz;
+	int N_ensayos=1;
+	
+	vecinos* lista;
 	int O;
 	clock_t begin, end;
 	double time_spent;
@@ -22,7 +24,7 @@ int main(){
 	for(i=1;i<4;i++){
 		
 		printf("\ngenerando datos\n");
-		matriz=crearGrafo(N,K*N);
+		lista=crearVecinos(N,10*N);
 		printf("generacion de datos terminada\n");
 		
 		for(j=0;j<N_ensayos;j++){
@@ -32,25 +34,26 @@ int main(){
 			
 			printf("\narreglo\n");
 			begin = clock();
-			dijkstra_arreglo(matriz,N,O);
+			dijkstra_arreglo(lista,N,O);
 			end = clock();
 			time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 			fprintf(archivoA,"%.5f\n",time_spent);
 			
 			printf("\nheap\n");
 			begin = clock();
-			dijkstra_heapNormal(matriz, N, O);
+			dijkstra_heapNormal(lista, N, O);
 			end = clock();
 			time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 			fprintf(archivoH,"%.5f\n",time_spent);
 	
+			/*
 			printf("\nfibonacci\n");
 			begin = clock();
-			dijkstra_fibonacciHeap(matriz, N, O);
+			dijkstra_fibonacciHeap(lista, N, O);
 			end = clock();
 			time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 			fprintf(archivoF,"%.5f\n",time_spent);
-	
+			*/
 	
 			
 			

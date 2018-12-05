@@ -1,13 +1,8 @@
-#include <math.h>
-#include <string.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "arreglo.h"
 
 
-
-void dijkstra_arreglo(double **matriz, int N, int O){
-
+void dijkstra_arreglo(vecinos *lista, int N, int O){
+	//1 es true 0 es false
 	int i,j;
 
 
@@ -45,23 +40,20 @@ void dijkstra_arreglo(double **matriz, int N, int O){
 		u = minNodo;
 		marcados[u]=1;
 		
-		
-		
-		for(j=0;j<N;j++){
-			
-			if(matriz[u][j]>0){
-				
-				if(dist[j]>dist[u]+matriz[u][j]){
-					dist[j] = dist[u]+matriz[u][j];
-					prev[j] = u;
-				}
-				
+		vecinos aux = lista[u]->next;
+		while(aux!=NULL){
+			if(dist[j]>dist[u]+ aux->peso ){
+				dist[j] = dist[u]+aux->peso;
+				prev[j] = u;
 			}
-			
+			aux = aux->next;
 		}
 		
 		
 	}
 	
-	
 }
+
+
+
+
