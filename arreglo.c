@@ -42,15 +42,18 @@ void dijkstra_arreglo(vecinos *lista, int N, int O){
 		
 		vecinos aux = lista[u]->next;
 		while(aux!=NULL){
-			if(dist[j]>dist[u]+ aux->peso ){
-				dist[j] = dist[u]+aux->peso;
-				prev[j] = u;
+			if(dist[aux->v_nodo]>dist[u]+ aux->peso ){
+				dist[aux->v_nodo] = dist[u]+aux->peso;
+				prev[aux->v_nodo] = u;
 			}
 			aux = aux->next;
 		}
 		
 		
 	}
+	/*
+	for(i=0;i<N;i++)
+		printf("%f\t%d\t%d\n",dist[i],prev[i]);*/
 	
 }
 

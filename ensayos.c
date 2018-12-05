@@ -10,7 +10,7 @@ int main(){
 	
 	int N=100000;
 	int K=10;
-	int N_ensayos=1;
+	int N_ensayos=10;
 	
 	vecinos* lista;
 	int O;
