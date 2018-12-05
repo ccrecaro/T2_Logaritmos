@@ -1,26 +1,26 @@
 #include "grafo.h"
 
-void agregarVecino(vecinos* the_files, int vecino,double new_peso) 
+void agregarVecino(vecinos* new_vecino, int vecino,double new_peso) 
 { 
-    vecinos new_filename = (vecinos) malloc(sizeof(vecinos)); 
-    new_filename->next = NULL; 
+    vecinos new_insert = (vecinos) malloc(sizeof(vecinos)); 
+    new_insert->next = NULL; 
     
-    new_filename->v_nodo=vecino;
-    new_filename->peso=new_peso; 
+    new_insert->v_nodo=vecino;
+    new_insert->peso=new_peso; 
     
 
-    if (*the_files == NULL) 
+    if (*new_vecino == NULL) 
     { 
-       the_files = &new_filename; 
+       new_vecino = &new_insert; 
        return; 
     }   
     
-    vecinos last = *the_files;
+    vecinos last = *new_vecino;
 
     while (last->next != NULL) 
         last = last->next; 
 
-    last->next = new_filename; 
+    last->next = new_insert; 
     return;     
 }
 
