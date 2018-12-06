@@ -279,8 +279,12 @@ void dijkstra_fibonacciHeap(vecinos *grafo,int N, int origen){
         }      
     }
     
-    for(int i=0;i<N;i++)
-		printf("%f\t%d\n",dist[i],prev[i]);  
+    /*
+	FILE *archivo = fopen("comp_fibo.dat","w"); 
+	for(int i=0;i<N;i++)
+		fprintf(archivo,"%f\t%d\n",dist[i],prev[i]);
+	fclose(archivo);
+	*/  
 }
 
 

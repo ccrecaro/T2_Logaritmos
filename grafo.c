@@ -61,30 +61,17 @@ vecinos* crearVecinos(int N, int vertices){
 	int cada_uno = (int)ceil(vertices/N)-1;
 	int new_cada_uno;
 	vertices=vertices-N;
-	int num;
+	int numi,numj;
 	
 	while(vertices>0){
-		
-		for(int i=0;i<N;i++){
-			if(vertices<=0)
-				break;
-			new_cada_uno = cada_uno;
-			while(new_cada_uno>0){
-				num = rand()%N;
-				if(marcados[i][num]==1)
-					continue;
-				new_peso=rand()/((double) RAND_MAX);
-				agregarVecino(&lista[i],num,new_peso);
-				marcados[i][num]=1;
-				new_cada_uno--;
-				vertices--;
-				if(vertices<=0)
-					break;
-			}
-			
-			
-			
-		}
+		numi = rand()%N;
+		numj = rand()%N;
+		if(marcados[numi][numj]==1)
+			continue;
+		new_peso=rand()/((double) RAND_MAX);
+		agregarVecino(&lista[numi],numj,new_peso);
+		marcados[numi][numj]=1;
+		vertices--;
 		
 	}
 	

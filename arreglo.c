@@ -52,8 +52,13 @@ void dijkstra_arreglo(vecinos *lista, int N, int O){
 		
 	}
 	
-	for(i=0;i<N;i++)
-		printf("%f\t%d\n",dist[i],prev[i]);
+	/*
+	FILE *archivo = fopen("comp_arreglo.dat","w"); 
+	for(int i=0;i<N;i++)
+		fprintf(archivo,"%f\t%d\n",dist[i],prev[i]);
+	fclose(archivo);
+	*/
+	
 	
 }
 

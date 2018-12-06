@@ -30,7 +30,7 @@ int main(){
 		printf("generacion de datos terminada\n");
 		
 		for(j=0;j<N_ensayos;j++){
-			
+			srand(time(0));
 			O = rand()%N;
 			
 			

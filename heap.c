@@ -4,7 +4,6 @@
 normalHeap crearHeapNormal(int size){
 	vertice* verts = (vertice*) malloc(size * sizeof(vertice));
 	int* pos = (int*) malloc(size * sizeof(int));
-	
 	normalHeap heapNormal;
 	heapNormal.arreglo=verts;
 	heapNormal.posiciones=pos;
@@ -22,42 +21,47 @@ void cambiar(vertice *x, vertice *y){
     
 void insertar(normalHeap* heapNormal, vertice k){ 
     heapNormal->size++; 
-    int i = heapNormal->size - 1;
+    int i = heapNormal->size - 1; 
     heapNormal->posiciones[k.i]=i;
     heapNormal->arreglo[i] = k; 
-  
+	int padre, hijo;
 
-	while (i != 0 && heapNormal->arreglo[(i-1)/2].prioridad > heapNormal->arreglo[i].prioridad){ 
-		heapNormal->posiciones[heapNormal->arreglo[i].i]=(i-1)/2;
-		heapNormal->posiciones[heapNormal->arreglo[(i-1)/2].i]=i;
-       cambiar(&heapNormal->arreglo[(i-1)/2],&heapNormal->arreglo[i]); 
-       
+	while (i != 0 && heapNormal->arreglo[(i-1)/2].prioridad > heapNormal->arreglo[i].prioridad){
+		padre=heapNormal->arreglo[(i-1)/2].i;
+		hijo=heapNormal->arreglo[i].i;
+		heapNormal->posiciones[hijo]=(i-1)/2;
+		heapNormal->posiciones[padre]=i;
+
+		cambiar(&heapNormal->arreglo[(i-1)/2],&heapNormal->arreglo[i]); 
        i = (i-1)/2; 
     } 
 } 
 
 void decreaseKey(normalHeap* heapNormal, int i, double newPrior){
-	
+	int padre,hijo;
 	int k=heapNormal->posiciones[i];
 	
 	heapNormal->arreglo[k].prioridad = newPrior;
 	
 	while (k!= 0 && heapNormal->arreglo[(k-1)/2].prioridad > heapNormal->arreglo[k].prioridad){
-		heapNormal->posiciones[heapNormal->arreglo[k].i]=(k-1)/2;
-		heapNormal->posiciones[heapNormal->arreglo[(k-1)/2].i]=k;
+		padre=heapNormal->arreglo[(k-1)/2].i;
+		hijo=heapNormal->arreglo[k].i;
+		heapNormal->posiciones[hijo]=(k-1)/2;
+		heapNormal->posiciones[padre]=k;
 		cambiar(&heapNormal->arreglo[(k-1)/2],&heapNormal->arreglo[k]);
-		
-
 		k = (k-1)/2;
 	}
+			
 		
-
+		
+	
 
 }
 
 void reordenar(normalHeap* heapNormal, int i) { 
 	
     int min = i; 
+    int padre,hijo;
     
     if (heapNormal->size>2*i + 1 && heapNormal->arreglo[2*i + 1].prioridad < heapNormal->arreglo[i].prioridad) 
         min = 2*i + 1; 
@@ -65,11 +69,13 @@ void reordenar(normalHeap* heapNormal, int i) {
     if (heapNormal->size>2*i + 2 && heapNormal->arreglo[2*i + 2].prioridad < heapNormal->arreglo[min].prioridad) 
         min = 2*i + 2; 
         
-    if (min != i){ 
-		heapNormal->posiciones[heapNormal->arreglo[i].i]=min;
-		heapNormal->posiciones[heapNormal->arreglo[min].i]=i;
-        cambiar(&heapNormal->arreglo[i], &heapNormal->arreglo[min]);
-        
+    if (min != i){
+		padre=heapNormal->arreglo[min].i;
+		hijo=heapNormal->arreglo[i].i;
+		heapNormal->posiciones[hijo]=min;
+		heapNormal->posiciones[padre]=i;
+        cambiar(&heapNormal->arreglo[i], &heapNormal->arreglo[min]); 
+        reordenar(heapNormal,min); 
     } 
 } 
 
@@ -133,10 +139,12 @@ void dijkstra_heapNormal(vecinos *lista, int N, int O){
 		
 		
 	}
-	
-	for(i=0;i<N;i++)
-		printf("%f\t%d\n",dist[i],prev[i]);
-	
+	/*
+	FILE *archivo = fopen("comp_heap.dat","w"); 
+	for(int i=0;i<N;i++)
+		fprintf(archivo,"%f\t%d\n",dist[i],prev[i]);
+	fclose(archivo);
+	*/
 	
 	
 }

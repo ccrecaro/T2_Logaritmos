@@ -8,9 +8,9 @@ typedef struct vertice{
 
 
 typedef struct normalHeap{ 
-    vertice *arreglo; 
-    int size;
+    vertice *arreglo;
     int* posiciones;
+    int size;
 }normalHeap;
 
 
