@@ -1,7 +1,7 @@
 #include "grafo.h"
 
 // para compilar 
-// gcc -g -o ensayos ensayos.c arreglo.c grafo.c heap.c -lm
+// gcc -g -o ensayos ensayos.c arreglo.c grafo.c heap.c fibonacci_heap.c -lm
 void dijkstra_arreglo(vecinos *lista, int N, int O);
 void dijkstra_heapNormal(vecinos *lista, int N, int O);
 void dijkstra_fibonacciHeap(vecinos *grafo,int N, int origen);
