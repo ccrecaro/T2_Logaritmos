@@ -2,7 +2,9 @@
 
 // para compilar 
 // gcc -g -o ensayos ensayos.c arreglo.c grafo.c heap.c -lm
-
+void dijkstra_arreglo(vecinos *lista, int N, int O);
+void dijkstra_heapNormal(vecinos *lista, int N, int O);
+void dijkstra_fibonacciHeap(vecinos *grafo,int N, int origen);
 
 int main(){
 	
@@ -24,7 +26,7 @@ int main(){
 	for(i=1;i<4;i++){
 		
 		printf("\ngenerando datos\n");
-		lista=crearVecinos(N,10*N);
+		lista=crearVecinos(N,K*N);
 		printf("generacion de datos terminada\n");
 		
 		for(j=0;j<N_ensayos;j++){
@@ -46,14 +48,14 @@ int main(){
 			time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 			fprintf(archivoH,"%.5f\n",time_spent);
 	
-			/*
+			
 			printf("\nfibonacci\n");
 			begin = clock();
 			dijkstra_fibonacciHeap(lista, N, O);
 			end = clock();
 			time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 			fprintf(archivoF,"%.5f\n",time_spent);
-			*/
+			
 	
 			
 			
