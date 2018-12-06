@@ -277,7 +277,10 @@ void dijkstra_fibonacciHeap(vecinos *grafo,int N, int origen){
             }
             v=v->next;
         }      
-    }    
+    }
+    
+    for(int i=0;i<N;i++)
+		printf("%f\t%d\n",dist[i],prev[i]);  
 }
 
 

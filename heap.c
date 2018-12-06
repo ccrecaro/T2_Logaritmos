@@ -134,6 +134,9 @@ void dijkstra_heapNormal(vecinos *lista, int N, int O){
 		
 	}
 	
+	for(i=0;i<N;i++)
+		printf("%f\t%d\n",dist[i],prev[i]);
+	
 	
 	
 }
