@@ -97,6 +97,7 @@ FibonacciHeap* fib_heap_union(FibonacciHeap *H1, FibonacciHeap *H2){
 
 
 void consolidate(FibonacciHeap *H){
+    
     int DH_n = (int)floor(log10(H->n -1)/log10(2)); //upper bound D(H->n) en el degree maximo
 
     Node **A= malloc(DH_n * sizeof(Node*));
@@ -107,24 +108,23 @@ void consolidate(FibonacciHeap *H){
     //calcular numero de nodos en root list
     int n_rlist = 0; //cantidad de nodos en root list
     Node *w =  H->min; //Para recorrer nodos en root list
+    Node *buf;
     if(H->min != NULL){
         n_rlist++;
-        while(w != H->min->left){
+        while(w != H->min->left || w!=buf){     
             n_rlist++;
-            Node *buf = w->right;
+            buf = w->right;
             w = buf;
         }
     }
-
+    
     w = H->min;
 
     for(int k=0; k<n_rlist; k++){
-        
         Node *x = w;
         int d = x->degree;
 
-        while(A[d] != NULL){
-            
+        while(d<DH_n && A[d] != NULL){
             Node *y = A[d]; //Otro nodo con el mismo degree que x
             if(x->prioridad > y->prioridad){
                 Node *buf = x;
@@ -134,18 +134,14 @@ void consolidate(FibonacciHeap *H){
             link(H, y, x);
             A[d] = NULL;
             d++;
-            
         }
         A[d] = x;
-
         w = w->right;
-        
     }
 
     H->min = NULL;
 
-    for(int i=0; i<=DH_n; i++){
-        
+    for(int i=0; i<DH_n; i++){
         if(A[i] != NULL){
             if (H->min == NULL){
 				H->min = A[i];
@@ -161,7 +157,6 @@ void consolidate(FibonacciHeap *H){
             }
         }
     }
-    
 }
 
 /*Corta el link entre x  y su padre y, haciendo de x una raiz*/
@@ -203,34 +198,31 @@ void cascading_cut(FibonacciHeap *H, Node *y){
 /*Encuentra el minimo en un Fibonacci Heap y lo extrae*/
 Node* extract_min(FibonacciHeap *H){
     Node *z = H->min;
-
+    
     if(z != NULL){
         if(z == z->right){
             H->min = z->child;
-           
             consolidate(H);
         }
         else{
-            if(z->child == NULL){
+            if(z->child == NULL && z->left != NULL && z->right!=NULL){
                 z->left->right = z->right;
                 z->right->left = z->left;
                 H->min = z->right;
-               
                 consolidate(H);
             }
             else{
-                z->left->right = z->child;
-                z->right->left = z->child->left;
-                z->child->left->right = z->right;
-                z->child->left = z->left;
-                H->min = z->right;
-              
-                consolidate(H);
+                if(z->left != NULL && z->right!=NULL){
+                    z->left->right = z->child;
+                    z->right->left = z->child->left;
+                    z->child->left->right = z->right;
+                    z->child->left = z->left;
+                    H->min = z->right;
+                    consolidate(H);
+                }
             }
         }
         H->n--;
-       
-
     }
     return z;
 }
@@ -238,15 +230,12 @@ Node* extract_min(FibonacciHeap *H){
 
 /*Cambia la prioridad del nodo x por una menor*/
 void decreasekey(FibonacciHeap *H, Node *x, double k){
-   
     if(k > x->prioridad){
         //printf("Error: La nueva prioridad es mas grande que la prioridad actual");
     }
     else{
-        
         x->prioridad = k;
         Node *y = x->p;
-       
         if (y != NULL && x->prioridad < y->prioridad){
             cut(H, x, y);
             cascading_cut(H, y);
@@ -257,10 +246,8 @@ void decreasekey(FibonacciHeap *H, Node *x, double k){
     }
 }
 
-void dijkstra_fibonacciHeap(double **grafo,int N, int origen){
+void dijkstra_fibonacciHeap(vecinos *grafo,int N, int origen){
     FibonacciHeap *Q = initialize_fh();
-    //int N = sizeof(grafo)/sizeof(grafo[0]); //tamaño matriz de grafos;
-    //printf("\nN: %d\n", N);
     double dist[N];
     int prev[N];
     Node *naux;
@@ -274,37 +261,23 @@ void dijkstra_fibonacciHeap(double **grafo,int N, int origen){
         }
         prev[v] = -1; 
         naux = initialize_node(dist[v], v);
-        
-        insert(Q, naux);
-        
+        insert(Q, naux);   
     }
-
-   
 
     while(Q->n > 0){
         naux =extract_min(Q);
-        
-        
-        for(int j=0; j<N;j++){
-            if(grafo[naux->value][j]>0){
-                
-                double nuevaDist =  naux->prioridad + grafo[naux->value][j];
-            
-                if(nuevaDist<dist[j]){
-                    
-                    dist[j]=nuevaDist;
-                    prev[j]=naux->value;
-                    
-                    Node *n_m= initialize_node(j,0);
-                    
-                    decreasekey(Q,n_m,nuevaDist);
-                }
+        vecinos v = grafo[naux->value]->next;
+        while(v != NULL){
+            double nuevaDist =  naux->prioridad + v->peso;
+            if(nuevaDist<dist[v->v_nodo]){
+                dist[v->v_nodo]=nuevaDist;
+                prev[v->v_nodo]=naux->value;
+                Node *n_m= initialize_node(v->v_nodo,0);                    
+                decreasekey(Q,n_m,nuevaDist);
             }
-
-            
-        }
-
-    }
-  
+            v=v->next;
+        }      
+    }    
 }
+
 

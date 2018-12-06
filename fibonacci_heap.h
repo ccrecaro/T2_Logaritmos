@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <math.h>
+#include "grafo.h"
 
 
 typedef int bool;
